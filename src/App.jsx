@@ -1,23 +1,29 @@
 
-// 1. Install Dependencies D
-// 2. Import dependencies D
-// 3. Setup webcam and canvas D
-// 4. Define references to those D
-// 5. Load Handpose D 
-// 6. Detect function
-// 7. Drawing Utilities from tensorflow
-// 8. Draw Functions
+
+// gesture recognition STEPS
+// Install fingerpose npm install fingerpose D
+// add useState D
+// import emojis and finger pose import * as fp from "fingerpose" D
+// update detect function for gesture handling
+// add emojis display to the screen
 
 import React, { useRef, useEffect } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import Webcam from 'react-webcam';
 import { drawHand } from './utilities';
+import { useState } from 'react'
+
+//import images
+import * as fp from "fingerpose" 
+import victory from "./victory.png"
+import thumbs_up from "./thumbs_up.png"
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-
+  const [emoji,setEmoji] = useState(null);
+  const images = { thumbs_up: thumbs_up, victory: victory };
   // loading the handpose
   useEffect(() => {
     const runHandpose = async () => {
@@ -54,6 +60,45 @@ function App() {
       // make detections 
       const hand = await net.estimateHands(video);
       console.log(hand);
+
+
+        if(hand.length>0)
+        {
+          //load gestures from fingerpose
+          const GE = new fp.GestureEstimator([
+            fp.Gestures.VictoryGesture,
+            fp.Gestures.ThumbsUpGesture,
+          ])
+
+          //detect gestures
+          const gesture = await GE.estimate(hand[0].landmarks,8);   //8 is confident level setting to minimum
+          console.log(gesture);
+
+          if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
+            // console.log(gesture.gestures);
+  
+            // const confidence = gesture.gestures.map(
+            //   (prediction) => prediction.confidence
+            // );
+            // const maxConfidence = confidence.indexOf(
+            //   Math.max.apply(null, confidence)
+            // );
+            // // console.log(gesture.gestures[maxConfidence].name);
+            // if (gesture.gestures.length > 0) {
+              const detectedGesture = gesture.gestures[0].name; // Use first detected gesture
+              console.log("Detected Gesture:", detectedGesture);
+              setEmoji(detectedGesture);
+            } else {
+              console.log("No gesture detected.");
+            }
+            
+            
+          }
+        
+
+
+
+
 
       const ctx = canvasRef.current.getContext("2d");
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear previous drawings
@@ -92,6 +137,23 @@ function App() {
             height: 480
           }}
         />
+         {emoji !== null ? (
+          <img
+            src={images[emoji]}
+            style={{
+              position: "absolute",
+              marginLeft: "auto",
+              marginRight: "auto",
+              left: 400,
+              bottom: 500,
+              right: 0,
+              textAlign: "center",
+              height: 100,
+            }}
+          />
+        ) : (
+          ""
+        )}
       </header>
     </div>
   );
