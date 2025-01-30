@@ -18,12 +18,17 @@ import { useState } from 'react'
 import * as fp from "fingerpose" 
 import victory from "./victory.png"
 import thumbs_up from "./thumbs_up.png"
-
+import thumbs_down from "./thumbs_down.png"
+import fist from './fistpng.jpg'
+import palm from './palm.jpeg'
+import left from './left.jpeg'
+import right from './right.jpeg'
+import { allGestures } from './allGestures';
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [emoji,setEmoji] = useState(null);
-  const images = { thumbs_up: thumbs_up, victory: victory };
+  const images = { thumbs_up: thumbs_up, victory: victory,fist:fist,right:right,left:left };
   // loading the handpose
   useEffect(() => {
     const runHandpose = async () => {
@@ -61,14 +66,11 @@ function App() {
       const hand = await net.estimateHands(video);
       console.log(hand);
 
-
+        
         if(hand.length>0)
         {
           //load gestures from fingerpose
-          const GE = new fp.GestureEstimator([
-            fp.Gestures.VictoryGesture,
-            fp.Gestures.ThumbsUpGesture,
-          ])
+          const GE = new fp.GestureEstimator(allGestures)
 
           //detect gestures
           const gesture = await GE.estimate(hand[0].landmarks,8);   //8 is confident level setting to minimum
@@ -91,6 +93,9 @@ function App() {
             } else {
               console.log("No gesture detected.");
             }
+
+
+           
             
             
           }
@@ -144,7 +149,7 @@ function App() {
               position: "absolute",
               marginLeft: "auto",
               marginRight: "auto",
-              left: 400,
+              left: 0,
               bottom: 500,
               right: 0,
               textAlign: "center",
@@ -154,6 +159,7 @@ function App() {
         ) : (
           ""
         )}
+        
       </header>
     </div>
   );
