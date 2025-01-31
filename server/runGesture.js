@@ -16,6 +16,12 @@ const runGesture = (value) => {
   const keys = commands[value];  // Get the keys for the gesture
 
   if (keys && value !== lastGesture) {
+    keys.forEach((key) => {
+      robot.keyToggle(key,"down");
+      console.log(`Presxsed key: ${key}`);    
+     });
+
+
     lastGesture = value;  // Update the last gesture sent
 
     // Clear the previous timeout if gesture changes
@@ -32,6 +38,10 @@ const runGesture = (value) => {
     
 
     
+}
+else if(value === lastGesture)
+{
+
 }
 };
 
