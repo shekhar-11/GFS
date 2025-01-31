@@ -12,17 +12,17 @@ for (let finger of fingersList) {
 
 export const LeftGesture = new fp.GestureDescription('left');
 for (let finger of fingersList) {
-  LeftGesture.addCurl(finger, fp.FingerCurl.FullCurl, 1.0);
+  LeftGesture.addCurl(finger, fp.FingerCurl.NoCurl, 1.0);
+  LeftGesture.addDirection(finger, fp.FingerDirection.HorizontalRight, 1.0);
 }
-LeftGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0); 
-LeftGesture.addDirection(fp.Finger.Index, fp.FingerDirection.HorizontalRight, 1.0);
+// LeftGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0); 
 
 export const RightGesture = new fp.GestureDescription('right');
 for (let finger of fingersList) {
-  RightGesture.addCurl(finger, fp.FingerCurl.FullCurl, 1.0);
+  RightGesture.addCurl(finger, fp.FingerCurl.NoCurl, 1.0);
+  RightGesture.addDirection(finger, fp.FingerDirection.HorizontalLeft, 1.0);
 }
-RightGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0); 
-RightGesture.addDirection(fp.Finger.Index, fp.FingerDirection.HorizontalLeft, 1.0);
+// RightGesture.addCurl(fp.Finger.Index, fp.FingerCurl.NoCurl, 1.0); 
 
 
 export const allGestures = [
