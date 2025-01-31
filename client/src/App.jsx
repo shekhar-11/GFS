@@ -29,6 +29,7 @@ function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [emoji,setEmoji] = useState(null);
+  const [prev,setPrev] = useState(null);
   const images = { thumbs_up: thumbs_up, victory: victory,fist:fist,right:right,left:left };
   // loading the handpose
   useEffect(() => {
@@ -48,64 +49,45 @@ function App() {
   
 
   const detect = async (net) => {
-    // check data availability
+    let prev = null;
+  
     if (webcamRef.current && webcamRef.current.video.readyState === 4) {
-
-      // get video properties
       const video = webcamRef.current.video;
       const videoWidth = video.videoWidth;
       const videoHeight = video.videoHeight;
-    
-      // set the video width and height
-      // forcing the video width and height just to set up the frame dimension
+  
       webcamRef.current.video.width = videoWidth;
       webcamRef.current.video.height = videoHeight;
-
-      // canvas w and h setup
       canvasRef.current.width = videoWidth;
       canvasRef.current.height = videoHeight;
-    
-      // make detections 
+  
       const hand = await net.estimateHands(video);
-      // console.log(hand);
-
-        
-        if(hand.length>0)
-        {
-          //load gestures from fingerpose
-          const GE = new fp.GestureEstimator(allGestures)
-
-          //detect gestures
-          const gesture = await GE.estimate(hand[0].landmarks,8);   //8 is confident level setting to minimum
-          // console.log(gesture);
-
-          if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
-          
-              const detectedGesture = gesture.gestures[0].name; // Use first detected gesture
-              // console.log("Detected Gesture:", detectedGesture);
-              setEmoji(detectedGesture);
-              sendGestureToBackend(detectedGesture);
-            } else {
-              console.log("No gesture detected.");
-            }
-
-
-           
-            
-            
+  
+      if (hand.length > 0) {
+        const GE = new fp.GestureEstimator(allGestures);
+        const gesture = await GE.estimate(hand[0].landmarks, 8);
+  
+        if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
+          const detectedGesture = gesture.gestures[0].name;
+  
+          if (prev !== detectedGesture) {
+            setEmoji(detectedGesture);
+            setPrev(detectedGesture)
+            // prev = detectedGesture;
+            console.log(prev);
+            sendGestureToBackend(detectedGesture);
           }
-
-          
-
-
-
-
-
+        } else {
+          console.log("No gesture detected.");
+        }
+      } 
+  
       const ctx = canvasRef.current.getContext("2d");
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // Clear previous drawings
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       drawHand(hand, ctx);
-    }
+    } 
   };
+  
   
   return (
     <div className='App'>

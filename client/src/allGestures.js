@@ -7,8 +7,11 @@ export const WaveGesture = new fp.GestureDescription('fist');
 // Curl other fingers fully for "thumbs down" gesture
 for (let finger of fingersList) {
   WaveGesture.addCurl(finger, fp.FingerCurl.NoCurl, 1.0); 
+  // WaveGesture.addCurl(finger, fp.FingerCurl.NoCurl, 1.0); 
   // WaveGesture.addCurl(finger, fp.FingerCurl.NoCurl, 0.9);
   WaveGesture.addDirection(finger,fp.FingerDirection.VerticalUp,1.0) 
+  WaveGesture.addDirection(finger,fp.FingerDirection.DiagonalUpLeft,1.0) 
+  WaveGesture.addDirection(finger,fp.FingerDirection.DiagonalUpRight,1.0) 
 }
 
 export const LeftGesture = new fp.GestureDescription('left');

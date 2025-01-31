@@ -7,8 +7,10 @@ app.use(cors()); // Enable CORS for frontend requests
 
 app.post("/gesture", (req, res) => {
   console.log("Received Gesture:", req.body.gesture);
-  
+  if(req.body.gesture!==null)
+  {
   runGesture(req.body.gesture);
+  }
   res.status(200).json({ message: "Gesture received successfully" });
 
 });
