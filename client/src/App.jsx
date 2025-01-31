@@ -24,6 +24,7 @@ import palm from './palm.jpeg'
 import left from './left.jpeg'
 import right from './right.jpeg'
 import { allGestures } from './allGestures';
+import { sendGestureToBackend } from './connectToBackend';
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -33,7 +34,7 @@ function App() {
   useEffect(() => {
     const runHandpose = async () => {
       const net = await handpose.load();
-      console.log("Handpose Loaded.");
+      // console.log("Handpose Loaded.");
 
       // loop and detect hands
       setInterval(() => {
@@ -43,6 +44,8 @@ function App() {
 
     runHandpose();
   }, []); // Empty dependency array ensures it runs only once
+
+  
 
   const detect = async (net) => {
     // check data availability
@@ -64,7 +67,7 @@ function App() {
     
       // make detections 
       const hand = await net.estimateHands(video);
-      console.log(hand);
+      // console.log(hand);
 
         
         if(hand.length>0)
@@ -74,22 +77,14 @@ function App() {
 
           //detect gestures
           const gesture = await GE.estimate(hand[0].landmarks,8);   //8 is confident level setting to minimum
-          console.log(gesture);
+          // console.log(gesture);
 
           if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
-            // console.log(gesture.gestures);
-  
-            // const confidence = gesture.gestures.map(
-            //   (prediction) => prediction.confidence
-            // );
-            // const maxConfidence = confidence.indexOf(
-            //   Math.max.apply(null, confidence)
-            // );
-            // // console.log(gesture.gestures[maxConfidence].name);
-            // if (gesture.gestures.length > 0) {
+          
               const detectedGesture = gesture.gestures[0].name; // Use first detected gesture
-              console.log("Detected Gesture:", detectedGesture);
+              // console.log("Detected Gesture:", detectedGesture);
               setEmoji(detectedGesture);
+              sendGestureToBackend(detectedGesture);
             } else {
               console.log("No gesture detected.");
             }
@@ -99,7 +94,8 @@ function App() {
             
             
           }
-        
+
+          
 
 
 
@@ -110,7 +106,7 @@ function App() {
       drawHand(hand, ctx);
     }
   };
-
+  
   return (
     <div className='App'>
       <header className='App-header'>
